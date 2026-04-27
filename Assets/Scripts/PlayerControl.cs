@@ -70,6 +70,20 @@ public class PlayerControl : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Obstacle"))
+        {
+            Respawn();
+        }
+    }
+
+    void Respawn()
+    {
+        rb.linearVelocity = Vector2.zero;
+        transform.position = RespawnController.Instance.respawnPoint.position;
+    }
+
 
 
 
