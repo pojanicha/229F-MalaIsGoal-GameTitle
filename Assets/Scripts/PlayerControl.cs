@@ -1,71 +1,70 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
     public TrajectoryLine trajectoryLine;
     public float power = 10f;
+    public Vector2 traPos = new Vector2(1f, 0f);
 
-    Rigidbody2D rb;
-    private bool isDragging;
+    private Rigidbody2D rb;
+    private bool isDragging = false;
+    private Vector2 dragtStart;
 
-    Vector2 DragStartPos;
+    public float speedDrag = 2f; // ปรับความเร็วในการลาก
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        trajectoryLine.enabled = false;
+        rb.gravityScale = 1f; // ปรับแรงโน้มถ่วงให้เหมาะสม
+        rb.linearDamping = 0.5f; // ปรับความต้านทานอากาศให้เหมาะสม
+        trajectoryLine.line.enabled = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //เริ่มกด
         if (Input.GetMouseButtonDown(0))
         {
-            DragStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             isDragging = true;
-            trajectoryLine.enabled = true;
+            dragtStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            trajectoryLine.line.enabled = true;
         }
-       
 
-
-        if (Input.GetMouseButton(0))
+        //ลาก
+        if (Input.GetMouseButton(0) && isDragging)
         {
-            
+            Vector2 dragEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 velocity = (dragtStart - dragEnd) * power * speedDrag;
+           
+
+            trajectoryLine.velocity = velocity;
+            trajectoryLine.startOffset = traPos;
+
+            trajectoryLine.RenderArc();
         }
 
-
-        if (Input.GetMouseButtonUp(0))
-        { 
-            Vector2 DragEndPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 velocity = (DragEndPos - DragStartPos) * power;
-            rb.linearVelocity = velocity;
-
-        }
-    }
-
-    public Vector2[] Plot(Rigidbody2D rigidbody, Vector2 pos, Vector2 velocity, int steps)
+        //กดปล่อย
+        if (Input.GetMouseButtonUp(0) && isDragging)
         {
-            Vector2[] results = new Vector2[steps];
+            isDragging = false;
+            trajectoryLine.line.enabled = false;
 
-            float timestep = Time.fixedDeltaTime / Physics2D.velocityIterations;
-            Vector2 gravityAccel = Physics2D.gravity * rigidbody.gravityScale * timestep * timestep;
+            Vector2 dragEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 velocity = (dragtStart - dragEnd) * power * speedDrag;
             
-            
-            float drag = 1f - timestep * rigidbody.drag;
-            Vector2 moveStep = velocity * timestep;
+            rb.linearVelocity = Vector2.zero;
+            rb.AddForce(velocity, ForceMode2D.Impulse);
+        }
 
-        for (int i = 0; i < steps; i++)
-            {
-                moveStep += gravityAccel;
-                moveStep *= drag;
-                pos += moveStep;
-                results[i] = pos;
-            }
-            return results;
+
+
     }
-    }
+
+
+
+
+}
 
 
 

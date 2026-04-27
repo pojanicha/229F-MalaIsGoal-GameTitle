@@ -8,19 +8,23 @@ public class TrajectoryLine : MonoBehaviour
 
     [Header("Line renderer variables")]
     public LineRenderer line;
-    [Range (2,30)]
+    [Range (50,100)]
     public int resolution; // ปรับเส้นให้ละเอียดมากขึ้น (จริงๆ 15 ก้พอแล้ว)
 
     [Header("Formula variables")]
     public Vector2 velocity; // ปรับเส้นสูง / ต่ำ x = แนวนอน y = แนวตั้ง
     public float yLimit;     // ห้ามปรับค่ามากกว่า 0 ให้ตั้งตั้งแต่ -1 ลงไป เพราะถ้าตั้งมากกว่า 0 ฟิสิกส์เกมพัง (มีไว้ปรับขนาดของเส้น)
     private float gravity; 
-
+    
     [Header("Linecast variables")]
     [Range (2,30)]
     public int linecastResolution;
     public LayerMask canHit;
-   
+    public Vector2 startOffset;
+
+
+    public float maxTime;
+
 
     private void Start()
     {
@@ -29,18 +33,17 @@ public class TrajectoryLine : MonoBehaviour
 
     private void Update()
     {
-        StartCoroutine(RenderArc());
     }
 
 
 
 
 
-    public IEnumerator RenderArc()
+    public void RenderArc()
     { 
         line.positionCount = resolution + 1;
         line.SetPositions(CalculateLineArray());
-        yield return null;
+      
         
 
     }
@@ -51,15 +54,17 @@ public class TrajectoryLine : MonoBehaviour
     {
         Vector3[] lineArray = new Vector3[resolution + 1];
 
-        var lowestTimeValue = MaxTimeX() / resolution;
+        var lowestTimeValue = Mathf.Min(MaxTimeY(), maxTime);
+        var step = lowestTimeValue / resolution;
 
         for (int i = 0; i < lineArray.Length; i++)
         {
-            var t = lowestTimeValue * i;
+            var t = step * i;
             lineArray[i] = CalculateLinePoint(t);
         }
         return lineArray;
     }
+
 
     private Vector2 HitPosition()
     { 
@@ -82,17 +87,12 @@ public class TrajectoryLine : MonoBehaviour
 
     }
 
-
-
-
-
-
     private Vector3 CalculateLinePoint(float t)
     { 
         float x = velocity.x * t;
         float y = (velocity.y * t) - (gravity * Mathf.Pow(t,2)) / 2f;
 
-        return new Vector3(x + transform.position.x, y + transform.position.y);
+        return new Vector3(x + transform.position.x + startOffset.x, y + transform.position.y + startOffset.y);
 
     }
 
@@ -109,10 +109,26 @@ public class TrajectoryLine : MonoBehaviour
 
     private float MaxTimeX()
     {
-        var x = velocity.x;
-        var t = (HitPosition().x - transform.position.x) / x;
+        float x = velocity.x;
+
+        if (Mathf.Abs(x) < 0.01)
+            return MaxTimeY();
+
+        float t = (HitPosition().x - transform.position.x) / x;
+
+        if (float.IsNaN(t) || float.IsInfinity(t) || t <= 0)
+        
+            return MaxTimeY();
+
         return t;
+
     }
+
+
+
+
+
+
 
 
 }
