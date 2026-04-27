@@ -13,18 +13,27 @@ public class PlayerControl : MonoBehaviour
 
     public float speedDrag = 2f; // ปรับความเร็วในการลาก
 
+    public Transform groundCheck;
+    public float groundCheckDistance = 0.2f;
+    public LayerMask groundLayer;
+    private bool isGrounded;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 1f; // ปรับแรงโน้มถ่วงให้เหมาะสม
-        rb.linearDamping = 0.5f; // ปรับความต้านทานอากาศให้เหมาะสม
+        rb.gravityScale = 1f; // ปรับแรงโน้มถ่วง
+        rb.linearDamping = 0.5f; // ปรับความต้าน
         trajectoryLine.line.enabled = false;
     }
 
     void Update()
     {
+        isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+
+
+
         //เริ่มกด
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && isGrounded)
         {
             isDragging = true;
             dragtStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
