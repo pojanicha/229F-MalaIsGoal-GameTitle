@@ -70,6 +70,7 @@ public class PlayerControl : MonoBehaviour
 
     }
 
+    // เช้คชน Obstacle ถ้าชนจะ Respawn
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Obstacle"))
@@ -81,7 +82,11 @@ public class PlayerControl : MonoBehaviour
     void Respawn()
     {
         rb.linearVelocity = Vector2.zero;
-        transform.position = RespawnController.Instance.respawnPoint.position;
+        
+       Vector3 spawnPos = transform.position = RespawnController.Instance.respawnPoint.position;
+        spawnPos.y += 1f;
+
+        transform.position = spawnPos;
     }
 
 
