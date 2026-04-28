@@ -1779,7 +1779,7 @@ PrefabInstance:
     - target: {fileID: 4450206437591992571, guid: f74567d8da245c040b663e39822143bf, type: 3}
       propertyPath: respawnPoint
       value: 
-      objectReference: {fileID: 4224181653704496073, guid: ab9d85e963ca99545ab1f9c2e1f98ed7, type: 3}
+      objectReference: {fileID: 118579361}
     - target: {fileID: 7914371498561751227, guid: f74567d8da245c040b663e39822143bf, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.23
@@ -1895,12 +1895,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1396392727237234841, guid: dbf2b5866b223ff4a83cb52a2c5ca276, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 11.22003
+      objectReference: {fileID: 0}
+    - target: {fileID: 1396392727237234841, guid: dbf2b5866b223ff4a83cb52a2c5ca276, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.25
       objectReference: {fileID: 0}
     - target: {fileID: 1396392727237234841, guid: dbf2b5866b223ff4a83cb52a2c5ca276, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.06131
+      value: -1.2733
       objectReference: {fileID: 0}
     - target: {fileID: 1396392727237234841, guid: dbf2b5866b223ff4a83cb52a2c5ca276, type: 3}
       propertyPath: m_LocalPosition.z
