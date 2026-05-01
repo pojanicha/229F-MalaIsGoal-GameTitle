@@ -39,7 +39,7 @@ public class TimeControl : MonoBehaviour
             timeScale = 0;
             isGameOver = true; // Set the flag to indicate the game is over
 
-          
+            SceneManager.LoadScene("Menu");
 
         }
 
